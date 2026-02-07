@@ -1,57 +1,74 @@
-# ⚡ PWM Receiver → Smart ALEX 15S Motor Controller
+# ⚡ RC PWM to Smart ALEX 15S Motor Controller (Arduino)
 
-A compact embedded project that reads **PWM signals from an RC receiver** and converts them into control commands for **Smart ALEX 15S motors**. Built for real-time response, smooth control, and easy integration with common microcontrollers.
+This project reads a **PWM signal from an RC receiver** and converts it into **direction + speed control** for a Smart ALEX 15S motor using an Arduino.
 
----
-
-## 🚀 Overview
-
-This system captures PWM input (1000–2000 µs) from an RC receiver channel, processes the pulse width, and maps it to motor speed/direction for Smart ALEX 15S motors.
-
-**Signal Flow**
-
+The system detects the pulse width from the receiver and:
+- Moves motor forward
+- Moves motor reverse
+- Stops at neutral
+- Adjusts speed using PWM
 
 ---
 
-## ✨ Features
+## 🚀 Features
 
-- 📡 Reads PWM input from RC receiver channels  
-- ⚙️ Real-time motor control (speed & direction mapping)  
-- 🧠 Simple, modular firmware design  
-- 🕒 Low-latency signal processing  
-- 🔌 Works with Arduino / ESP32 / STM32 (adaptable)
-
----
-
-## 📐 PWM Reference
-
-| State            | Pulse Width |
-|------------------|-------------|
-| Minimum Speed    | ~1000 µs    |
-| Neutral / Stop   | ~1500 µs    |
-| Maximum Speed    | ~2000 µs    |
-
-> Values may vary slightly by receiver—calibrate as needed.
+- 📡 Reads PWM signal from RC receiver using `pulseIn()`
+- 🔁 Bidirectional motor control
+- ⚙️ Speed mapped to PWM output (0–255)
+- 🧠 Neutral dead-zone to prevent unwanted movement
+- 🪶 Lightweight and simple Arduino implementation
 
 ---
 
-## 🛠️ Hardware Requirements
+## 🧩 Hardware Used
 
+- Arduino (Uno/Nano/ESP32 compatible logic)
 - RC Receiver (PWM output)
-- Smart **ALEX 15S Motor**
-- Microcontroller (Arduino / ESP32 / STM32)
-- Compatible Motor Driver / ESC
-- External power supply (per motor specs)
-- Jumper wires & common ground between receiver and MCU
+- Smart ALEX 15S Motor
+- Motor Driver
+- External Power Supply
+- Jumper wires
 
 ---
 
-## 💻 Software Requirements
+## 🔌 Pin Configuration
 
-- Arduino IDE / PlatformIO (or vendor toolchain)
-- C/C++ support
-- Basic understanding of PWM & timers
+| Component        | Arduino Pin |
+|------------------|-------------|
+| Receiver Signal  | D10         |
+| PWM Output       | D3          |
+| Direction Pin    | D2          |
+
+> Make sure all devices share a **common GND**
+
+---
+
+## 📐 PWM Signal Behavior
+
+| Pulse Width | Action |
+|------------|--------|
+| 1188–1525 µs | Reverse |
+| 1525–1530 µs | Neutral (Stop) |
+| 1530–1800+ µs | Forward |
+
+- Neutral zone prevents motor jitter
+- Values above 1800 µs = max speed
+
+---
+
+## 🧠 Working Principle
+
+1. Arduino reads PWM pulse from receiver
+2. Pulse width determines direction:
+   - Above neutral → Forward
+   - Below neutral → Reverse
+   - Near neutral → Stop
+3. Pulse value mapped to motor speed (0–255)
+4. PWM output controls motor speed
+5. Direction pin sets rotation direction
 
 ---
 
 
+  delay(10);
+}
