@@ -69,6 +69,3 @@ The system detects the pulse width from the receiver and:
 
 ---
 
-
-  delay(10);
-}
